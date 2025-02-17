@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+        .embed-container {
+            width: 100%;
+            height: 600px;
+            border: none;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-marketing-atom" class="embed-container"></div>
+    <script>
+        const { useState, useEffect } = React;
+        const { Play, Mail, Search, Target, Share2, Megaphone } = lucide;
+
+        const VideoMarketingAtom = () => {
+            const [time, setTime] = useState(0);
+            const [particlePositions, setParticlePositions] = useState([]);
+
+            const marketingComponents = [
+                {
+                    id: 1,
+                    name: 'SEO',
+                    icon: Search,
+                    color: '#00ff88'
+                },
+                {
+                    id: 2,
+                    name: 'SEM',
+                    icon: Megaphone,
+                    color: '#ff3366'
+                },
+                {
+                    id: 3,
+                    name: 'Email Marketing',
+                    icon: Mail,
+                    color: '#ffaa00'
+                },
+                {
+                    id: 4,
+                    name: 'Addressable Geofencing',
+                    icon: Target,
+                    color: '#00aaff'
+                },
+                {
+                    id: 5,
+                    name: 'Social Media Ads',
+                    icon: Share2,
+                    color: '#aa00ff'
+                }
+            ];
+
+            useEffect(() => {
+                const particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push({
+                        x: Math.random() * 360,
+                        y: Math.random() * 360,
+                        speed: 0.5 + Math.random() * 2,
+                        angle: Math.random() * Math.PI * 2
+                    });
+                }
+                setParticlePositions(particles);
+            }, []);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setTime(t => t + 1);
+                    setParticlePositions(particles =>
+                        particles.map(p => ({
+                            ...p,
+                            x: (p.x + Math.cos(p.angle) * p.speed) % 360,
+                            y: (p.y + Math.sin(p.angle) * p.speed) % 360
+                        }))
+                    );
+                }, 50);
+                return () => clearInterval(interval);
+            }, []);
+
+            const calculatePosition = (index, total, radius) => {
+                const baseAngle = (index / total) * 2 * Math.PI;
+                const oscillation = Math.sin(time / 20) * 10;
+                const adjustedRadius = radius + oscillation;
+                const x = adjustedRadius * Math.cos(baseAngle + time / 100);
+                const y = adjustedRadius * Math.sin(baseAngle + time / 100);
+                return { x, y };
+            };
+
+            return React.createElement(
+                'div',
+                {
+                    className: 'relative w-full h-full bg-gray-900 rounded-lg overflow-hidden'
+                },
+                [
+                    React.createElement('div', {
+                        key: 'gradient',
+                        className: 'absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-transparent'
+                    }),
+                    ...particlePositions.map((particle, index) =>
+                        React.createElement('div', {
+                            key: `particle-${index}`,
+                            className: 'absolute w-1 h-1 bg-blue-400/30 rounded-full',
+                            style: {
+                                left: `${particle.x}px`,
+                                top: `${particle.y}px`,
+                                transform: 'translate(-50%, -50%)'
+                            }
+                        })
+                    ),
+                    // ... rest of the component structure
+                ]
+            );
+        };
+
+        ReactDOM.render(
+            React.createElement(VideoMarketingAtom),
+            document.getElementById('video-marketing-atom')
+        );
+    </script>
+</body>
+</html>
